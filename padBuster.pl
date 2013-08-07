@@ -1,5 +1,9 @@
 #!/usr/bin/perl
 #
+#
+# PadBuster v0.3.4 - Added support for ignoring SSL issues
+# Nikhil Sreekumar (@roo7break) - roo7break@gmail.com
+#
 # PadBuster v0.3.3 - Automated script for performing Padding Oracle attacks
 # Brian Holyfield - Gotham Digital Science (labs@gdssecurity.com)
 #
@@ -45,6 +49,7 @@ my $bruteForce;
 my $ignoreContent;
 my $useBody;
 my $verbose;
+my $nosslchecks;
 
 GetOptions( "log" => \$logFiles,
             "post=s" => \$post,
@@ -56,7 +61,7 @@ GetOptions( "log" => \$logFiles,
             "intermediate=s" => \$intermediaryInput,
             "ciphertext=s" => \$cipherInput,
             "plaintext=s" => \$plainTextInput,
-	    "encodedtext=s" => \$encodedPlainTextInput,
+	        "encodedtext=s" => \$encodedPlainTextInput,
             "noencode" => \$noEncodeOption,
             "veryverbose" => \$superVerbose,
             "proxy=s" => \$proxy,
@@ -68,6 +73,7 @@ GetOptions( "log" => \$logFiles,
             "bruteforce" => \$bruteForce,
             "ignorecontent" => \$ignoreContent,
             "usebody" => \$useBody,
+            "nosslchecks" => \$nosslchecks,
             "verbose" => \$verbose);
   
 print "\n+-------------------------------------------+\n";
@@ -75,7 +81,11 @@ print "| PadBuster - v0.3.3                        |\n";
 print "| Brian Holyfield - Gotham Digital Science  |\n";
 print "| labs\@gdssecurity.com                      |\n";
 print "+-------------------------------------------+\n";
-
+print "| PadBuster - v0.3.4                        |\n";
+print "| Added support for ignoring SSL issues     |\n";
+print "| Nikhil Sreekumar (@roo7break)             |\n";
+print "| roo7break\@gmail.com                      |\n";
+print "+-------------------------------------------+\n";
 if ($#ARGV < 2) { 
  die "    
     Use: padBuster.pl URL EncryptedSample BlockSize [options]
@@ -98,6 +108,7 @@ Options:
          -headers [HTTP Headers]: Custom Headers (name1::value1;name2::value2)
 	 -interactive: Prompt for confirmation on decrypted bytes
 	 -intermediate [Bytes]: Intermediate Bytes for CipherText (Hex-Encoded)
+	 -nosslchecks: Ignore any SSL related issues
 	 -log: Generate log files (creates folder PadBuster.DDMMYY)
 	 -noencode: Do not URL-encode the payload (encoded by default)
 	 -noiv: Sample does not include IV (decrypt first block) 
@@ -147,7 +158,13 @@ my $timeTracker = 0;
 if ($encoding < 0 || $encoding > 4) {
 	print "\nERROR: Encoding must be a value between 0 and 4\n";
 	exit();
-} 
+}
+
+# Ignore any SSL issues
+if ($nosslcheck){
+$ENV{PERL_LWP_SSL_VERIFY_HOSTNAME} = 0;
+}
+
 my $encodingFormat = $encoding ? $encoding : 0;
 
 my $encryptedBytes = $sample;

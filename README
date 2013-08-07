@@ -14,3 +14,11 @@ to padding oracle attacks.
 
 PadBuster is released under the Reciprocal Public License 1.5 (RPL1.5)
 http://www.opensource.org/licenses/rpl1.5
+
+Changelog
+----------
+PadBuster v0.3.4 - Added support for ignoring SSL issues
+Nikhil Sreekumar (@roo7break) - roo7break@gmail.com
+
+PadBuster v0.3.3 - Automated script for performing Padding Oracle attacks
+Brian Holyfield - Gotham Digital Science (labs@gdssecurity.com)
