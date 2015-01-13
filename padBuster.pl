@@ -161,7 +161,7 @@ if ($encoding < 0 || $encoding > 4) {
 }
 
 # Ignore any SSL issues
-if ($nosslcheck){
+if ($nosslchecks){
 $ENV{PERL_LWP_SSL_VERIFY_HOSTNAME} = 0;
 }
 
